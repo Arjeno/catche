@@ -6,30 +6,43 @@ module Catche
 
         @@controller_tags = []
 
+        # Returns an existing (duplicate) or new tag object for the given arguments.
+        #
+        #   Catche::Tag::Controller.for(Project, ProjectsController)
         def for(model, controller, options={})
           tag_object = find_or_initialize(model, controller.class, options)
 
-          @@controller_tags << tag_object
-          @@controller_tags.uniq!
+          objects << tag_object
+          objects.uniq!
 
-          # Lastly return the tags
-          tag_object.tags(controller.params)
+          tag_object
         end
 
+        # Finds a previously declared (same) tag object or returns a new one.
         def find_or_initialize(model, controller, options={})
-          @@controller_tags.each do |tag_object|
-            return tag_object if tag_object.same?(model, controller, options)
+          new_object = self.new(model, controller, options)
+
+          objects.each do |tag_object|
+            return tag_object if tag_object.same?(new_object)
           end
 
-          nil
+          new_object
         end
 
         def find_by_model(model)
-
+          objects.select { |tag_object| tag_object.model == model }
         end
 
         def find_by_association(association)
+          objects.select { |tag_object| tag_object.associations.include?(association) }
+        end
 
+        def clear
+          @@controller_tags = []
+        end
+
+        def objects
+          @@controller_tags
         end
 
       end
@@ -62,12 +75,13 @@ module Catche
         tags = []
 
         tags += association_tags(params) if bubble?
-        tags += expire_tags(params)
+        tags += expiration_tags(params)
 
         tags
       end
 
-      def expire_tags(params={})
+      # The tags that should expire as soon as the resource or collection changes.
+      def expiration_tags(params={})
         [Catche::Tag.join(association_tags(params), identifier_tags(params))]
       end
 
@@ -95,8 +109,10 @@ module Catche
         options[:bubble]
       end
 
-      def same?(model, controller, options={})
-        self.model == model && self.controller == controller && self.options == options
+      def same?(object)
+        self.model      == object.model &&
+        self.controller == object.controller &&
+        self.options    == object.options
       end
 
     end
