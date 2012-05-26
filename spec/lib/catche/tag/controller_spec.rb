@@ -4,6 +4,10 @@ describe Catche::Tag::Controller do
 
   before(:each) do
     Catche::Tag::Controller.clear
+
+    @user     = User.create
+    @project  = @user.projects.create
+    @task     = @project.tasks.create
   end
 
   describe "initializing" do
@@ -67,9 +71,18 @@ describe Catche::Tag::Controller do
 
       subject { Catche::Tag::Controller.new(Project, ProjectsController) }
 
-      it "should return tags" do
-        subject.tags.should == ['projects']
-        subject.tags(:id => 1).should == ['projects_1']
+      before(:each) do
+        @controller = dummy_controller(ProjectsController)
+      end
+
+      it "should return resource tag" do
+        @controller.instance_variable_set('@project', @project)
+        subject.tags(@controller).should == ["projects_#{@project.id}"]
+      end
+
+      it "should return collection tag" do
+        @controller.instance_variable_set('@project', nil)
+        subject.tags(@controller).should == ["projects"]
       end
 
     end
@@ -78,23 +91,31 @@ describe Catche::Tag::Controller do
 
       subject { Catche::Tag::Controller.new(Task, TasksController, :associations => [:project]) }
 
+      before(:each) do
+        @controller = dummy_controller(TasksController)
+        @controller.instance_variable_set('@user', @user)
+        @controller.instance_variable_set('@project', @project)
+        @controller.instance_variable_set('@task', @task)
+      end
+
       it "should return associated tags" do
-        subject.association_tags(:project_id => 1).should == ['projects_1']
-        subject.association_tags(:project_id => 1, :id => 1).should == ['projects_1']
+        subject.association_tags(@controller).should == ["projects_#{@project.id}"]
       end
 
       it "should maintain given association order" do
         subject.associations = [:user, :project]
-        params = { :project_id => 1, :user_id => 1 }
 
-        subject.association_tags(params).should == ['users_1', 'projects_1']
-        subject.tags(params).should == ['users_1_projects_1_tasks']
+        subject.association_tags(@controller).should == ["users_#{@user.id}", "projects_#{@project.id}"]
+        subject.tags(@controller).should == ["users_#{@user.id}_projects_#{@project.id}_tasks_#{@task.id}"]
       end
 
       it "should return tags" do
-        subject.tags(:project_id => 1).should == ['projects_1_tasks']
-        subject.tags(:project_id => 1, :id => 1).should == ['projects_1_tasks_1']
-        subject.tags.should == ['tasks']
+        subject.tags(@controller).should == ["projects_#{@project.id}_tasks_#{@task.id}"]
+      end
+
+      it "should omit missing resource association tags" do
+        @controller.instance_variable_set('@project', nil)
+        subject.tags(@controller).should == ["tasks_#{@task.id}"]
       end
 
       describe "bubble" do
@@ -102,18 +123,18 @@ describe Catche::Tag::Controller do
         subject { Catche::Tag::Controller.new(Task, TasksController, :associations => [:project], :bubble => true) }
 
         it "should return tags separate for each association" do
-          subject.tags(:project_id => 1).should == ['projects_1', 'projects_1_tasks']
+          subject.tags(@controller).should == ["projects_#{@project.id}", "projects_#{@project.id}_tasks_#{@task.id}"]
 
           subject.associations = [:user, :project]
-          subject.tags(:project_id => 1, :user_id => 1).should == ['users_1', 'projects_1', 'users_1_projects_1_tasks']
+          subject.tags(@controller).should == ["users_#{@user.id}", "projects_#{@project.id}", "users_#{@user.id}_projects_#{@project.id}_tasks_#{@task.id}"]
         end
 
         it "should setup different expire tags" do
-          tags = subject.tags(:project_id => 1)
-          expiration_tags = subject.expiration_tags(:project_id => 1)
+          tags = subject.tags(@controller)
+          expiration_tags = subject.expiration_tags(@controller)
 
           tags.should_not == expiration_tags
-          expiration_tags.should == ['projects_1_tasks']
+          expiration_tags.should == ["projects_#{@project.id}_tasks_#{@task.id}"]
         end
 
       end

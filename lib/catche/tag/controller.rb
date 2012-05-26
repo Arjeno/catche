@@ -57,9 +57,10 @@ module Catche
         association = options.delete :through
 
         @options = {
-          :resource_param => :id,
-          :associations   => [association].flatten.compact,
-          :bubble         => false
+          :resource_name    => Catche::Tag::Resource.singularize(@model),
+          :collection_name  => Catche::Tag::Resource.pluralize(@model),
+          :associations     => [association].flatten.compact,
+          :bubble           => false
         }.merge(options)
 
         @associations = @options[:associations]
@@ -71,38 +72,39 @@ module Catche
       #
       #   object = Catche::Tag::Controller.new(Task, TasksController, :through => [:user, :project])
       #   object.tags(controller) => ['users_1_projects_1_tasks_1']
-      def tags(params={})
+      def tags(controller)
         tags = []
 
-        tags += association_tags(params) if bubble?
-        tags += expiration_tags(params)
+        tags += association_tags(controller) if bubble?
+        tags += expiration_tags(controller)
 
         tags
       end
 
       # The tags that should expire as soon as the resource or collection changes.
-      def expiration_tags(params={})
-        [Catche::Tag.join(association_tags(params), identifier_tags(params))]
+      def expiration_tags(controller)
+        [Catche::Tag.join(association_tags(controller), identifier_tags(controller))]
       end
 
       # Identifying tag for the current resource or collection.
       #
       #   object = Catche::Tag::Controller.new(Task, TasksController)
-      #   object.identifier_tags(:id => 1) => ['tasks', 1]
-      #   object.identifier_tags => ['tasks']
-      def identifier_tags(params={})
-        [Catche::Tag::Model.for(model), params[options[:resource_param]]].compact
+      #   object.identifier_tags(controller) => ['tasks', 1]
+      def identifier_tags(controller)
+        Catche::Tag.join options[:collection_name], Catche::Tag::Resource.resource(controller, options[:resource_name]).try(:id)
+      end
+
+      # Maps the given resources names to tags by fetching the resources from the given object.
+      def resource_tags(*resources)
+        resources.map { |resource| Catche::Tag.join(Catche::Tag::Resource.pluralize(resource.class), resource.id) }
       end
 
       # Maps association tags.
       #
       #   object = Catche::Tag::Controller.new(Task, TasksController, :through => [:user, :project])
-      #   object.association_tags(:user_id => 1, :project_id => 1) => ['users_1', 'projects_1']
-      def association_tags(params={})
-        associations.map do |association|
-          association_tag = Catche::Tag::Model.name(association)
-          (id = params["#{association}_id".to_sym]).present? ? Catche::Tag.join(association_tag, id) : nil
-        end.compact
+      #   object.association_tags(@controller) => ['users_1', 'projects_1']
+      def association_tags(object)
+        resource_tags(*Catche::Tag::Resource.associations(object, associations))
       end
 
       def bubble?
