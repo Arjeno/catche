@@ -54,7 +54,7 @@ module Catche
         @model = model
         @controller = controller
 
-        association = options.delete :through
+        association = options[:through]
 
         @options = {
           :resource_name    => Catche::Tag::Resource.singularize(@model),
