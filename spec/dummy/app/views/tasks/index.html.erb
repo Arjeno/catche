@@ -15,13 +15,13 @@
     <td><%= task.title %></td>
     <td><%= task.description %></td>
     <td><%= task.complete %></td>
-    <td><%= link_to 'Show', task %></td>
-    <td><%= link_to 'Edit', edit_task_path(task) %></td>
-    <td><%= link_to 'Destroy', task, confirm: 'Are you sure?', method: :delete %></td>
+    <td><%= link_to 'Show', project_task_path(@project, task) %></td>
+    <td><%= link_to 'Edit', edit_project_task_path(@project, task) %></td>
+    <td><%= link_to 'Destroy', project_task_path(@project, task), confirm: 'Are you sure?', method: :delete %></td>
   </tr>
 <% end %>
 </table>
 
 <br />
 
-<%= link_to 'New Task', new_task_path %>
+<%= link_to 'New Task', new_project_task_path(@project) %>
