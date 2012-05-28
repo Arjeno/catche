@@ -1,3 +1,6 @@
+require 'catche/tag/controller'
+require 'catche/tag/resource'
+
 module Catche
   module Tag
 

@@ -1,0 +1,1 @@
+require 'catche/model/base'
