@@ -6,6 +6,7 @@ Spork.prefork do
   require File.expand_path("../dummy/config/environment", __FILE__)
   require 'rspec/rails'
   require 'rspec/autorun'
+  require 'capybara/rspec'
 
   # Requires supporting ruby files with custom matchers and macros, etc,
   # in spec/support/ and its subdirectories.
@@ -42,4 +43,6 @@ Spork.each_run do
   Dir["#{Rails.root}/../../lib/**/*.rb"].each do |lib|
     load lib
   end
+
+  Rails.cache.clear
 end
