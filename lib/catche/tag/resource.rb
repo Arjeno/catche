@@ -13,7 +13,15 @@ module Catche
         end
 
         def resource(object, name)
-          object.instance_variable_get("@#{name}")
+          if resource = object.instance_variable_get("@#{name}")
+            return resource
+          elsif object.respond_to?(name)
+            begin
+              return object.send(name)
+            rescue; end
+          end
+
+          nil
         end
 
         def associations(object, associations)

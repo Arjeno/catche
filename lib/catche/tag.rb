@@ -25,25 +25,47 @@ module Catche
       end
     end
 
-    def fetch_tag(tag)
-      Catche.adapter.read stored_key(:tags, tag), []
+    def expire!(*tags)
+      expired_keys = []
+
+      tags.each do |tag|
+        keys = fetch_tag(tag)
+        expired_keys += keys
+
+        keys.each do |key|
+          # Expires the cached value
+          Catche.adapter.delete key
+
+          # Removes the tag from the tag list in case it's never used again
+          Catche.adapter.write(
+              stored_key(:keys, key),
+              fetch_key(key).delete(stored_key(:tags, tag))
+            )
+        end
+
+        Catche.adapter.delete stored_key(:tags, tag)
+      end
+
+      expired_keys
     end
 
-    def fetch_key(key)
-      Catche.adapter.read stored_key(:keys, key), []
-    end
+    protected
 
-    def stored_key(scope, value)
-      join_keys KEY, scope.to_s, value.to_s
-    end
+      def fetch_tag(tag)
+        Catche.adapter.read stored_key(:tags, tag), []
+      end
 
-    def join_keys(*keys)
-      keys.join('.')
-    end
+      def fetch_key(key)
+        Catche.adapter.read stored_key(:keys, key), []
+      end
 
-    def tags
-      Catche.adapter.read(KEY, [])
-    end
+      def stored_key(scope, value)
+        join_keys KEY, scope.to_s, value.to_s
+      end
+
+      def join_keys(*keys)
+        keys.join('.')
+      end
 
   end
 end

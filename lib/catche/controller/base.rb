@@ -13,7 +13,7 @@ module Catche
         #   catche Task, :through => :project
         def catche(model, *args)
           options = args.extract_options!
-          tag     = Proc.new { |controller| Catche::Tag::Object.for(model, controller, options) }
+          tag     = Proc.new { |controller| Catche::Tag::Object.for(model, controller.class, options) }
 
           # Use Rails caches_action to pass along the tag
           caches_action(*args, { :tag => tag }.merge(options))
@@ -40,6 +40,9 @@ module Catche
           end
 
           Catche::Tag.tag! key, *tags
+
+          # Store for future reference
+          @catche_cache_object = object
         end
 
         super

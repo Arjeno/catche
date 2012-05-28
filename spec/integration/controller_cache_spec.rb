@@ -10,44 +10,110 @@ describe "Controller Cache" do
 
   describe "simple" do
 
-    it "should cache action index" do
-      visit projects_path
-      current_path.should be_action_cached
+    describe "store" do
 
-      Rails.cache.read("catche.keys.views/www.example.com#{current_path}").should include 'catche.tags.projects'
-      Rails.cache.read('catche.tags.projects').should be_present
+      it "should cache action index" do
+        visit projects_path
+        current_path.should be_action_cached
+
+        Rails.cache.read("catche.keys.views/www.example.com#{current_path}").should include 'catche.tags.projects'
+        Rails.cache.read('catche.tags.projects').should be_present
+      end
+
+      it "should not cache action show" do
+        visit project_path(@project)
+        current_path.should_not be_action_cached
+      end
+
     end
 
-    it "should not cache action show" do
-      visit project_path(@project)
-      current_path.should_not be_action_cached
+    describe "expiring" do
+
+      it "should expire index on collection change" do
+        visit projects_path
+        current_path.should be_action_cached
+
+        project = @user.projects.create
+
+        current_path.should_not be_action_cached
+
+        Rails.cache.read('catche.tags.projects').should_not be_present
+      end
+
+      it "should expire index on resource update" do
+        visit projects_path
+        current_path.should be_action_cached
+
+        @project.update_attributes :title => 'Updated title'
+
+        current_path.should_not be_action_cached
+
+        Rails.cache.read('catche.tags.projects').should_not be_present
+      end
+
     end
 
   end
 
   describe "associations" do
 
-    it "should cache action index" do
-      visit project_tasks_path(@project)
-      current_path.should be_action_cached
+    describe "store" do
 
-      tag = "catche.tags.projects_#{@project.id}_tasks"
-      Rails.cache.read("catche.keys.views/www.example.com#{current_path}").should include tag
-      Rails.cache.read(tag).should be_present
+      it "should cache action index" do
+        visit project_tasks_path(@project)
+        current_path.should be_action_cached
+
+        tag = "catche.tags.projects_#{@project.id}_tasks"
+        Rails.cache.read("catche.keys.views/www.example.com#{current_path}").should include tag
+        Rails.cache.read(tag).should be_present
+      end
+
+      it "should cache action show" do
+        visit project_task_path(@project, @task)
+        current_path.should be_action_cached
+
+        tag = "catche.tags.projects_#{@project.id}_tasks_#{@task.id}"
+        Rails.cache.read("catche.keys.views/www.example.com#{current_path}").should include tag
+        Rails.cache.read(tag).should be_present
+      end
+
+      it "should not cache action edit" do
+        visit edit_project_task_path(@project, @task)
+        current_path.should_not be_action_cached
+      end
+
     end
 
-    it "should cache action show" do
-      visit project_task_path(@project, @task)
-      current_path.should be_action_cached
+    describe "expiring" do
 
-      tag = "catche.tags.projects_#{@project.id}_tasks_#{@task.id}"
-      Rails.cache.read("catche.keys.views/www.example.com#{current_path}").should include tag
-      Rails.cache.read(tag).should be_present
+      it "should expire index on collection change" do
+        visit project_tasks_path(@project)
+        current_path.should be_action_cached
+
+        task = @project.tasks.create
+
+        current_path.should_not be_action_cached
+
+        Rails.cache.read("catche.tags.projects_#{@project.id}_tasks").should_not be_present
+      end
+
+      it "should expire resource on change" do
+        visit project_task_path(@project, @task)
+        current_path.should be_action_cached
+
+        @task.update_attributes :title => 'Updated title'
+
+        current_path.should_not be_action_cached
+
+        Rails.cache.read("catche.tags.projects_#{@project.id}_tasks_#{@task.id}").should_not be_present
+      end
+
     end
 
-    it "should not cache action edit" do
-      visit edit_project_task_path(@project, @task)
-      current_path.should_not be_action_cached
+    describe "bubble" do
+
+
+
     end
 
   end

@@ -77,12 +77,12 @@ describe Catche::Tag::Object do
 
       it "should return resource tag" do
         @controller.instance_variable_set('@project', @project)
-        subject.tags(@controller).should == ["projects_#{@project.id}"]
+        subject.tags(@controller).should include "projects_#{@project.id}"
       end
 
       it "should return collection tag" do
         @controller.instance_variable_set('@project', nil)
-        subject.tags(@controller).should == ["projects"]
+        subject.tags(@controller).should include "projects"
       end
 
     end
@@ -99,23 +99,23 @@ describe Catche::Tag::Object do
       end
 
       it "should return associated tags" do
-        subject.association_tags(@controller).should == ["projects_#{@project.id}"]
+        subject.association_tags(@controller).should include "projects_#{@project.id}"
       end
 
       it "should maintain given association order" do
         subject.associations = [:user, :project]
 
-        subject.association_tags(@controller).should == ["users_#{@user.id}", "projects_#{@project.id}"]
-        subject.tags(@controller).should == ["users_#{@user.id}_projects_#{@project.id}_tasks_#{@task.id}"]
+        subject.association_tags(@controller).should include "users_#{@user.id}", "projects_#{@project.id}"
+        subject.tags(@controller).should include "users_#{@user.id}_projects_#{@project.id}_tasks_#{@task.id}"
       end
 
       it "should return tags" do
-        subject.tags(@controller).should == ["projects_#{@project.id}_tasks_#{@task.id}"]
+        subject.tags(@controller).should include "projects_#{@project.id}_tasks_#{@task.id}"
       end
 
       it "should omit missing resource association tags" do
         @controller.instance_variable_set('@project', nil)
-        subject.tags(@controller).should == ["tasks_#{@task.id}"]
+        subject.tags(@controller).should include "tasks_#{@task.id}"
       end
 
       describe "bubble" do
@@ -123,10 +123,10 @@ describe Catche::Tag::Object do
         subject { Catche::Tag::Object.new(Task, TasksController, :associations => [:project], :bubble => true) }
 
         it "should return tags separate for each association" do
-          subject.tags(@controller).should == ["projects_#{@project.id}", "projects_#{@project.id}_tasks_#{@task.id}"]
+          subject.tags(@controller).should include "projects_#{@project.id}", "projects_#{@project.id}_tasks_#{@task.id}"
 
           subject.associations = [:user, :project]
-          subject.tags(@controller).should == ["users_#{@user.id}", "projects_#{@project.id}", "users_#{@user.id}_projects_#{@project.id}_tasks_#{@task.id}"]
+          subject.tags(@controller).should include "users_#{@user.id}", "projects_#{@project.id}", "users_#{@user.id}_projects_#{@project.id}_tasks_#{@task.id}"
         end
 
         it "should setup different expire tags" do
@@ -134,7 +134,7 @@ describe Catche::Tag::Object do
           expiration_tags = subject.expiration_tags(@controller)
 
           tags.should_not == expiration_tags
-          expiration_tags.should == ["projects_#{@project.id}_tasks_#{@task.id}"]
+          expiration_tags.should include "projects_#{@project.id}_tasks_#{@task.id}"
         end
 
       end

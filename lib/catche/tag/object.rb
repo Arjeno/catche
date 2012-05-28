@@ -57,10 +57,11 @@ module Catche
         association = options[:through]
 
         @options = {
-          :resource_name    => Catche::Tag::Resource.singularize(@model),
-          :collection_name  => Catche::Tag::Resource.pluralize(@model),
-          :associations     => [association].flatten.compact,
-          :bubble           => false
+          :resource_name      => Catche::Tag::Resource.singularize(@model),
+          :collection_name    => Catche::Tag::Resource.pluralize(@model),
+          :associations       => [association].flatten.compact,
+          :bubble             => false,
+          :expire_collection  => true
         }.merge(options)
 
         @associations = @options[:associations]
@@ -83,7 +84,20 @@ module Catche
 
       # The tags that should expire as soon as the resource or collection changes.
       def expiration_tags(initialized_object)
-        [Catche::Tag.join(association_tags(initialized_object), identifier_tags(initialized_object))]
+        tags = []
+
+        # Add collection tags when enabled
+        tags << Catche::Tag.join(
+            association_tags(initialized_object),
+            options[:collection_name]
+          ) if options[:expire_collection]
+
+        tags << Catche::Tag.join(
+            association_tags(initialized_object),
+            identifier_tags(initialized_object)
+          )
+
+        tags.uniq
       end
 
       # Identifying tag for the current resource or collection.
