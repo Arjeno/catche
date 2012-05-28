@@ -7,11 +7,11 @@ require "catche/version"
 Gem::Specification.new do |s|
   s.name        = "catche"
   s.version     = Catche::VERSION
-  s.authors     = ["TODO: Your name"]
-  s.email       = ["TODO: Your email"]
-  s.homepage    = "TODO"
-  s.summary     = "TODO: Summary of Catche."
-  s.description = "TODO: Description of Catche."
+  s.authors     = ["Arjen Oosterkamp"]
+  s.email       = ["mail@arjen.me"]
+  s.homepage    = "http://arjen.me/"
+  s.summary     = "Smart collection and resource caching"
+  s.description = ""
 
   s.files = Dir["{app,config,db,lib}/**/*"] + ["MIT-LICENSE", "Rakefile", "README.rdoc"]
 
