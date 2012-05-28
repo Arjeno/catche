@@ -13,21 +13,33 @@ module Catche
         #   catche Task, :through => :project
         def catche(model, *args)
           options = args.extract_options!
-          tag     = Proc.new { |c| Catche::Tag::Controller.for(model, c, options) }
+          tag     = Proc.new { |controller| Catche::Tag::Controller.for(model, controller, options) }
 
           # Use Rails caches_action to pass along the tag
-          caches_action *args, { :tag => tag }.merge(options)
+          caches_action(*args, { :tag => tag }.merge(options))
         end
 
       end
 
       def _save_fragment(name, options={})
-        key = fragment_cache_key(name)
-        tag = options[:tag]
+        key     = fragment_cache_key(name)
+        object  = options[:tag]
+        tags    = []
 
-        if tag.present?
-          tag = self.instance_exec(self, &tag) if tag.respond_to?(:call)
-          # TODO: Tag the stored key
+        if object.present?
+          if object.respond_to?(:call)
+            object = self.instance_exec(self, &object)
+
+            if object.respond_to?(:tags)
+              tags = object.tags(self)
+            else
+              tags = Array.new(object)
+            end
+          else
+            tags = Array.new(object)
+          end
+
+          Catche::Tag.tag! key, *tags
         end
 
         super

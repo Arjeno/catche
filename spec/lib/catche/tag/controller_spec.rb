@@ -28,7 +28,7 @@ describe Catche::Tag::Controller do
       subject.associations.should == [:project]
     end
 
-    it "should accept 'through' option as an alias to a singular or multiple associations" do
+    it "should accept 'through' option as an alias to a singular or multiple association" do
       object = Catche::Tag::Controller.new(Task, dummy_controller(TasksController), :through => :project)
       object.associations.should == [:project]
 
