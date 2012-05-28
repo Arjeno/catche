@@ -1,16 +1,16 @@
 module Catche
   module Tag
-    class Controller
+    class Object
 
       class << self
 
-        @@controller_tags = []
+        @@objects = []
 
         # Returns an existing (duplicate) or new tag object for the given arguments.
         #
-        #   Catche::Tag::Controller.for(Project, ProjectsController)
-        def for(model, controller, options={})
-          tag_object = find_or_initialize(model, controller.class, options)
+        #   Catche::Tag::Object.for(Project, ProjectsController)
+        def for(model, object, options={})
+          tag_object = find_or_initialize(model, object, options)
 
           objects << tag_object
           objects.uniq!
@@ -19,8 +19,8 @@ module Catche
         end
 
         # Finds a previously declared (same) tag object or returns a new one.
-        def find_or_initialize(model, controller, options={})
-          new_object = self.new(model, controller, options)
+        def find_or_initialize(model, object, options={})
+          new_object = self.new(model, object, options)
 
           objects.each do |tag_object|
             return tag_object if tag_object.same?(new_object)
@@ -38,21 +38,21 @@ module Catche
         end
 
         def clear
-          @@controller_tags = []
+          @@objects = []
         end
 
         def objects
-          @@controller_tags
+          @@objects
         end
 
       end
 
-      attr_reader :model, :controller, :options
+      attr_reader :model, :object, :options
       attr_accessor :associations
 
-      def initialize(model, controller, options={})
+      def initialize(model, object, options={})
         @model = model
-        @controller = controller
+        @object = object
 
         association = options[:through]
 
@@ -66,32 +66,32 @@ module Catche
         @associations = @options[:associations]
       end
 
-      # Returns the tags for the given controller.
+      # Returns the tags for the given object.
       # If `bubble` is set to true it will pass along the separate tag for each association.
       # This means the collection or resource is expired as soon as the association changes.
       #
-      #   object = Catche::Tag::Controller.new(Task, TasksController, :through => [:user, :project])
-      #   object.tags(controller) => ['users_1_projects_1_tasks_1']
-      def tags(controller)
+      #   object = Catche::Tag::Object.new(Task, TasksController, :through => [:user, :project])
+      #   object.tags(controller.new) => ['users_1_projects_1_tasks_1']
+      def tags(initialized_object)
         tags = []
 
-        tags += association_tags(controller) if bubble?
-        tags += expiration_tags(controller)
+        tags += association_tags(initialized_object) if bubble?
+        tags += expiration_tags(initialized_object)
 
         tags
       end
 
       # The tags that should expire as soon as the resource or collection changes.
-      def expiration_tags(controller)
-        [Catche::Tag.join(association_tags(controller), identifier_tags(controller))]
+      def expiration_tags(initialized_object)
+        [Catche::Tag.join(association_tags(initialized_object), identifier_tags(initialized_object))]
       end
 
       # Identifying tag for the current resource or collection.
       #
-      #   object = Catche::Tag::Controller.new(Task, TasksController)
+      #   object = Catche::Tag::Object.new(Task, TasksController)
       #   object.identifier_tags(controller) => ['tasks', 1]
-      def identifier_tags(controller)
-        Catche::Tag.join options[:collection_name], Catche::Tag::Resource.resource(controller, options[:resource_name]).try(:id)
+      def identifier_tags(initialized_object)
+        Catche::Tag.join options[:collection_name], Catche::Tag::Resource.resource(initialized_object, options[:resource_name]).try(:id)
       end
 
       # Maps the given resources names to tags by fetching the resources from the given object.
@@ -101,10 +101,10 @@ module Catche
 
       # Maps association tags.
       #
-      #   object = Catche::Tag::Controller.new(Task, TasksController, :through => [:user, :project])
-      #   object.association_tags(@controller) => ['users_1', 'projects_1']
-      def association_tags(object)
-        resource_tags(*Catche::Tag::Resource.associations(object, associations))
+      #   object = Catche::Tag::Object.new(Task, TasksController, :through => [:user, :project])
+      #   object.association_tags(controller) => ['users_1', 'projects_1']
+      def association_tags(initialized_object)
+        resource_tags(*Catche::Tag::Resource.associations(initialized_object, associations))
       end
 
       def bubble?
@@ -113,7 +113,7 @@ module Catche
 
       def same?(object)
         self.model      == object.model &&
-        self.controller == object.controller &&
+        self.object     == object.object &&
         self.options    == object.options
       end
 

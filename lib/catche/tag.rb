@@ -1,4 +1,4 @@
-require 'catche/tag/controller'
+require 'catche/tag/object'
 require 'catche/tag/resource'
 
 module Catche

@@ -1,9 +1,9 @@
 require 'spec_helper'
 
-describe Catche::Tag::Controller do
+describe Catche::Tag::Object do
 
   before(:each) do
-    Catche::Tag::Controller.clear
+    Catche::Tag::Object.clear
 
     @user     = User.create
     @project  = @user.projects.create
@@ -12,7 +12,7 @@ describe Catche::Tag::Controller do
 
   describe "initializing" do
 
-    subject { Catche::Tag::Controller.new(Task, dummy_controller(TasksController), :associations => [:project]) }
+    subject { Catche::Tag::Object.new(Task, TasksController, :associations => [:project]) }
 
     it "should instantize" do
       subject.should be_present
@@ -29,10 +29,10 @@ describe Catche::Tag::Controller do
     end
 
     it "should accept 'through' option as an alias to a singular or multiple association" do
-      object = Catche::Tag::Controller.new(Task, dummy_controller(TasksController), :through => :project)
+      object = Catche::Tag::Object.new(Task, TasksController, :through => :project)
       object.associations.should == [:project]
 
-      object = Catche::Tag::Controller.new(Task, dummy_controller(TasksController), :through => [:user, :project])
+      object = Catche::Tag::Object.new(Task, TasksController, :through => [:user, :project])
       object.associations.should == [:user, :project]
     end
 
@@ -41,26 +41,26 @@ describe Catche::Tag::Controller do
   describe "finders" do
 
     before(:each) do
-      @project  = Catche::Tag::Controller.for(Project, dummy_controller(ProjectsController))
-      @task     = Catche::Tag::Controller.for(Task, dummy_controller(TasksController), :associations => [:project])
+      @project  = Catche::Tag::Object.for(Project, ProjectsController)
+      @task     = Catche::Tag::Object.for(Task, TasksController, :associations => [:project])
       @objects  = [@project, @task]
     end
 
     it "should find or initialize" do
-      Catche::Tag::Controller.find_or_initialize(Project, ProjectsController).should == @project
+      Catche::Tag::Object.find_or_initialize(Project, ProjectsController).should == @project
 
-      Catche::Tag::Controller.clear
-      Catche::Tag::Controller.find_or_initialize(Project, ProjectsController).should_not == @project
-      Catche::Tag::Controller.find_or_initialize(Project, ProjectsController).should be_present
+      Catche::Tag::Object.clear
+      Catche::Tag::Object.find_or_initialize(Project, ProjectsController).should_not == @project
+      Catche::Tag::Object.find_or_initialize(Project, ProjectsController).should be_present
     end
 
     it "should find by model" do
-      Catche::Tag::Controller.find_by_model(Project).should == [@project]
-      Catche::Tag::Controller.find_by_model(Task).should == [@task]
+      Catche::Tag::Object.find_by_model(Project).should == [@project]
+      Catche::Tag::Object.find_by_model(Task).should == [@task]
     end
 
     it "should find by association" do
-      Catche::Tag::Controller.find_by_association(:project).should == [@task]
+      Catche::Tag::Object.find_by_association(:project).should == [@task]
     end
 
   end
@@ -69,7 +69,7 @@ describe Catche::Tag::Controller do
 
     describe "simple" do
 
-      subject { Catche::Tag::Controller.new(Project, ProjectsController) }
+      subject { Catche::Tag::Object.new(Project, ProjectsController) }
 
       before(:each) do
         @controller = dummy_controller(ProjectsController)
@@ -89,7 +89,7 @@ describe Catche::Tag::Controller do
 
     describe "associations" do
 
-      subject { Catche::Tag::Controller.new(Task, TasksController, :associations => [:project]) }
+      subject { Catche::Tag::Object.new(Task, TasksController, :associations => [:project]) }
 
       before(:each) do
         @controller = dummy_controller(TasksController)
@@ -120,7 +120,7 @@ describe Catche::Tag::Controller do
 
       describe "bubble" do
 
-        subject { Catche::Tag::Controller.new(Task, TasksController, :associations => [:project], :bubble => true) }
+        subject { Catche::Tag::Object.new(Task, TasksController, :associations => [:project], :bubble => true) }
 
         it "should return tags separate for each association" do
           subject.tags(@controller).should == ["projects_#{@project.id}", "projects_#{@project.id}_tasks_#{@task.id}"]
