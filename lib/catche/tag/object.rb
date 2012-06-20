@@ -8,8 +8,8 @@ module Catche
 
         # Returns an existing (duplicate) or new tag object for the given arguments.
         #
-        #   Catche::Tag::Object.for(Project, ProjectsController)
-        def for(model, object, options={})
+        #   Catche::Tag::Object.register!(Project, ProjectsController)
+        def register!(model, object, options={})
           tag_object = find_or_initialize(model, object, options)
 
           objects << tag_object
@@ -17,6 +17,7 @@ module Catche
 
           tag_object
         end
+        alias :for :register!
 
         # Finds a previously declared (same) tag object or returns a new one.
         def find_or_initialize(model, object, options={})
