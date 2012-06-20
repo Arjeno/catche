@@ -79,6 +79,11 @@ describe Catche::Tag::Object do
         @controller.instance_variable_set('@project', @project)
         subject.tags(@controller).should include "projects_#{@project.id}"
       end
+      
+      it "should not return collection tag" do
+        @controller.instance_variable_set('@project', @project)
+        subject.tags(@controller).should_not include "projects"
+      end
 
       it "should return collection tag" do
         @controller.instance_variable_set('@project', nil)

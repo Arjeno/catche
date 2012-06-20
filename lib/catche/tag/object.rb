@@ -85,13 +85,14 @@ module Catche
 
       # The tags that should expire as soon as the resource or collection changes.
       def expiration_tags(initialized_object)
-        tags = []
+        resource  = Catche::Tag::Resource.resource(initialized_object, options[:resource_name])
+        tags      = []
 
         # Add collection tags when enabled
         tags << Catche::Tag.join(
             association_tags(initialized_object),
             options[:collection_name]
-          ) if options[:expire_collection]
+          ) if resource.nil? && options[:expire_collection]
 
         tags << Catche::Tag.join(
             association_tags(initialized_object),

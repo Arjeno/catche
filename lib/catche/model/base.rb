@@ -4,24 +4,28 @@ module Catche
       extend ActiveSupport::Concern
 
       included do
-        after_update  :expire_resource!
-        after_destroy :expire_resource!
+        after_update  :expire_resource_and_collection!
+        after_destroy :expire_resource_and_collection!
 
         after_create  :expire_collection!
-        after_destroy :expire_collection!
+      end
+
+      def expire_resource_and_collection!
+        expire_collection!
+        expire_resource!
       end
 
       def expire_collection!
-        expire_cache!
+        expire_cache! false
       end
 
       def expire_resource!
         expire_cache!
       end
 
-      def expire_cache!
+      def expire_cache!(set_instance=true)
         tags = Catche::Tag::Object.find_by_model(self.class).collect do |obj|
-          self.instance_variable_set("@#{obj.options[:resource_name]}", self)
+          self.instance_variable_set("@#{obj.options[:resource_name]}", self) if set_instance
           obj.expiration_tags(self)
         end.flatten.compact.uniq
 

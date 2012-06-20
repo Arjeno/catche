@@ -50,6 +50,15 @@ describe "Controller Cache" do
 
         Rails.cache.read('catche.tags.projects').should_not be_present
       end
+      
+      it "should not expire resource on collection change" do
+        visit project_task_path(@project, @task)
+        current_path.should be_action_cached
+
+        @project.tasks.create
+
+        current_path.should be_action_cached
+      end
 
     end
 
