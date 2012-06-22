@@ -87,7 +87,7 @@ class TasksController < ApplicationController
   protected
 
   def tasks
-    @tasks ||= project ? project.tasks : Task
+    @tasks ||= parent ? parent.tasks : Task
   end
 
   def task
@@ -96,6 +96,15 @@ class TasksController < ApplicationController
 
   def project
     @project ||= Project.find(params[:project_id]) if params[:project_id].present?
+  end
+
+  def user
+    @user ||= Project.find(params[:user_id]) if params[:user_id].present?
+  end
+
+  def parent
+    return user if params[:project_id].present?
+    return project if params[:user_id].present?
   end
 
 end
