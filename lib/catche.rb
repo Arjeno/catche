@@ -3,6 +3,7 @@ require 'catche/adapter'
 require 'catche/controller'
 require 'catche/model'
 require 'catche/tag'
+require 'catche/resource_loader'
 
 module Catche
 
