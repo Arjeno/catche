@@ -1,6 +1,6 @@
 # Catche [![Build Status](https://secure.travis-ci.org/Arjeno/catche.png?branch=master)](http://travis-ci.org/Arjeno/catche)
 
-Catche is a caching library for easy and automated resource and collection caching. It basically tags cached outputs and expires them based on configuration.
+Catche is a caching library for Ruby on Rails. It automates automated resource and collection caching/expiration. It basically tags cached outputs and expires those tags based on configuration.
 
 ## Installation
 
@@ -23,21 +23,63 @@ end
 
 ### Associative caching
 
+For advanced usage such as advanced caching you need to configure this in the model.
+
 ```ruby
-class TasksController < ApplicationController
-  catche Task, :index, :show, :through => :project
+class Task < ActiveRecord::Base
+  catche :through => :project
 end
 ```
 
-On resource change this will expire:
+```ruby
+class TasksController < ApplicationController
+  catche Task, :index, :show
+end
+```
 
-* Resource task
-* Resource task within specific project
+On resource `update` and `destroy` this will expire:
 
-On resource or collection change this will expire:
+* Resource: `tasks_1`
+* Collection: `tasks`
+* Collection: `projects_1_tasks_1`
 
-* Collection tasks
-* Collection tasks within specific project
+On resource `create` this will expire:
+
+* Collection: `tasks`
+* Collection: `projects_1_tasks_1`
+
+You can use as many associations as you would like;
+
+```ruby
+class Task < ActiveRecord::Base
+  catche :through => [:user, :project]
+end
+```
+
+### Advanced configuration
+
+```ruby
+class TasksController < ApplicationController
+  catche(
+    Task,                       # Configured cached model
+    :index, :show,              # Actions
+    {
+      :resource_name => :task,  # Name of your resource, defaults to your model name
+    }
+  )
+end
+```
+
+```ruby
+class Task < ActiveRecord::Base
+  catche(
+    :through        => [:user, :project], # Associations
+    :tag_identifier => :id,               # Unique identifier for the resource
+    :class          => Task,              # Class to use as tag scope
+    :collection_tag => 'tasks',           # Name of the tag scope for this model,
+  )
+end
+```
 
 ## License
 
