@@ -1,6 +1,6 @@
 # Catche [![Build Status](https://secure.travis-ci.org/Arjeno/catche.png?branch=master)](http://travis-ci.org/Arjeno/catche)
 
-Catche is a caching library for Ruby on Rails. It automates automated resource and collection caching/expiration. It basically tags cached outputs and expires those tags based on configuration.
+Catche is a caching library for Ruby on Rails. It automates resource and collection caching/expiration. It basically tags cached outputs and expires those tags based on configuration.
 
 ## Installation
 
@@ -23,7 +23,7 @@ end
 
 ### Associative caching
 
-For advanced usage such as advanced caching you need to configure this in the model.
+Catche supports associative (nested) caching.
 
 ```ruby
 class Task < ActiveRecord::Base
