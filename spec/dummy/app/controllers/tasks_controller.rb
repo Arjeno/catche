@@ -1,6 +1,6 @@
 class TasksController < ApplicationController
 
-  catche Task, :index, :show, :through => :project
+  catche Task, :index, :show
 
   # GET /tasks
   # GET /tasks.json

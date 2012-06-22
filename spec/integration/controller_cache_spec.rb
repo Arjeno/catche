@@ -81,7 +81,7 @@ describe "Controller Cache" do
         visit project_task_path(@project, @task)
         current_path.should be_action_cached
 
-        tag = "catche.tags.projects_#{@project.id}_tasks_#{@task.id}"
+        tag = "catche.tags.tasks_#{@task.id}"
         Rails.cache.read("catche.keys.views/www.example.com#{current_path}").should include tag
         Rails.cache.read(tag).should be_present
       end

@@ -1,5 +1,4 @@
-require 'catche/tag/object'
-require 'catche/tag/resource'
+require 'catche/tag/collect'
 
 module Catche
   module Tag
