@@ -38,6 +38,19 @@ describe Catche::Tag::Collect do
           subject[:expire].should == ["tasks_#{@task.id}"]
         end
 
+        describe "multiple" do
+
+          before(:each) do
+            Task.catche({ :through => [:project, :user] })
+          end
+
+          it "should have simple tags" do
+            subject[:set].should    == ["tasks_#{@task.id}"]
+            subject[:expire].should == ["tasks_#{@task.id}"]
+          end
+
+        end
+
       end
 
     end
@@ -62,12 +75,32 @@ describe Catche::Tag::Collect do
 
         subject { Catche::Tag::Collect.collection(@task, Task) }
 
+        before(:each) do
+          Task.catche({ :through => :project })
+        end
+
         it "should have tags to set" do
           subject[:set].should == ["projects_#{@project.id}_tasks"]
         end
 
         it "should have tags to expire" do
           subject[:expire].should == ["tasks", "projects_#{@project.id}_tasks"]
+        end
+
+        describe "multiple" do
+
+          before(:each) do
+            Task.catche({ :through => [:project, :user] })
+          end
+
+          it "should have tags that include both project and user" do
+            subject[:set].should == ["projects_#{@project.id}_tasks", "users_#{@user.id}_tasks"]
+          end
+
+          it "should have expiration tags that include both project and user" do
+            subject[:expire].should == ["tasks", "projects_#{@project.id}_tasks", "users_#{@user.id}_tasks"]
+          end
+
         end
 
       end

@@ -32,12 +32,11 @@ module Catche
           set_tags    = []
           expire_tags = []
 
-          if association_tags.any?
-            set_tags  << Tag.join(*association_tags, resource_class.catche_tag)
-          else
-            # Without any associations, add just the collection tag
-            set_tags  << resource_class.catche_tag
+          association_tags.each do |tag|
+            set_tags  << Tag.join(tag, resource_class.catche_tag)
           end
+
+          set_tags    << resource_class.catche_tag if association_tags.blank?
 
           expire_tags << resource_class.catche_tag if include_base
           expire_tags += set_tags
