@@ -5,7 +5,7 @@ class TasksController < ApplicationController
   # GET /tasks
   # GET /tasks.json
   def index
-    @tasks = project.tasks
+    @tasks = tasks.all
 
     respond_to do |format|
       format.html # index.html.erb
@@ -16,7 +16,7 @@ class TasksController < ApplicationController
   # GET /tasks/1
   # GET /tasks/1.json
   def show
-    @task = project.tasks.find(params[:id])
+    @task = task
 
     respond_to do |format|
       format.html # show.html.erb
@@ -27,7 +27,7 @@ class TasksController < ApplicationController
   # GET /tasks/new
   # GET /tasks/new.json
   def new
-    @task = project.tasks.build
+    @task = tasks.new
 
     respond_to do |format|
       format.html # new.html.erb
@@ -37,13 +37,13 @@ class TasksController < ApplicationController
 
   # GET /tasks/1/edit
   def edit
-    @task = project.tasks.find(params[:id])
+    @task = task
   end
 
   # POST /tasks
   # POST /tasks.json
   def create
-    @task = project.tasks.build(params[:task])
+    @task = tasks.new(params[:task])
 
     respond_to do |format|
       if @task.save
@@ -59,7 +59,7 @@ class TasksController < ApplicationController
   # PUT /tasks/1
   # PUT /tasks/1.json
   def update
-    @task = project.tasks.find(params[:id])
+    @task = task
 
     respond_to do |format|
       if @task.update_attributes(params[:task])
@@ -75,7 +75,7 @@ class TasksController < ApplicationController
   # DELETE /tasks/1
   # DELETE /tasks/1.json
   def destroy
-    @task = project.tasks.find(params[:id])
+    @task = task
     @task.destroy
 
     respond_to do |format|
@@ -86,8 +86,16 @@ class TasksController < ApplicationController
 
   protected
 
+  def tasks
+    @tasks ||= project ? project.tasks : Task
+  end
+
+  def task
+    @task ||= tasks.find(params[:id]) if params[:id].present?
+  end
+
   def project
-    @project ||= Project.find(params[:project_id])
+    @project ||= Project.find(params[:project_id]) if params[:project_id].present?
   end
 
 end

@@ -117,11 +117,16 @@ describe "Controller Cache" do
         Rails.cache.read("catche.tags.projects_#{@project.id}_tasks_#{@task.id}").should_not be_present
       end
 
-    end
+      it "should expire global index on collection change" do
+        visit tasks_path
+        current_path.should be_action_cached
 
-    describe "bubble" do
+        task = @project.tasks.create
 
+        current_path.should_not be_action_cached
 
+        Rails.cache.read("catche.tags.tasks").should_not be_present
+      end
 
     end
 
