@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "Controller Cache" do
+describe "Controller Action" do
 
   before(:each) do
     @user     = User.create
@@ -204,6 +204,30 @@ describe "Controller Cache" do
 
     end
 
+  end
+
+  def projects_path(*args)
+    caches_action_projects_path(*args)
+  end
+
+  def tasks_path(*args)
+    caches_action_tasks_path(*args)
+  end
+
+  def project_tasks_path(*args)
+    caches_action_project_tasks_path(*args)
+  end
+
+  def project_task_path(*args)
+    caches_action_project_task_path(*args)
+  end
+
+  def user_tasks_path(*args)
+    caches_action_user_tasks_path(*args)
+  end
+
+  def user_task_path(*args)
+    caches_action_user_task_path(*args)
   end
 
 end

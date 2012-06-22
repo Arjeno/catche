@@ -6,14 +6,16 @@ module Catche
 
     eager_autoload do
       autoload :Action
+      autoload :Page
     end
 
-    include Action
+    include Action, Page
 
     included do
 
       class_attribute :catche_model,
-                      :catche_resource_name
+                      :catche_resource_name,
+                      :catche_constructed_tags
 
     end
 
@@ -31,6 +33,10 @@ module Catche
 
         # Use Rails caches_action to pass along the tag
         caches_action(*args, options.merge({ :catche => true }))
+      end
+
+      def catche?
+        self.catche_model.present?
       end
 
     end
