@@ -1,0 +1,2 @@
+module CachesAction::ProjectsHelper
+end

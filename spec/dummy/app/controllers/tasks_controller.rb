@@ -1,7 +1,5 @@
 class TasksController < ApplicationController
 
-  catche Task, :index, :show
-
   # GET /tasks
   # GET /tasks.json
   def index
