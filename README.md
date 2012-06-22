@@ -26,19 +26,19 @@ This will result in the following expirations:
 ```ruby
 @project.update_attributes({ :title => 'Update!' }) # or @project.destroy
 
-# => Expires /projects
+# => Expires: /projects
 # => Expires: /projects/1
 ```
 
 ```ruby
 @project.create
 
-# => Expires /projects
+# => Expires: /projects
 ```
 
 ### Associative caching
 
-Catche supports associative (nested) caching.
+Catche supports associative caching.
 
 ```ruby
 class Task < ActiveRecord::Base
@@ -57,7 +57,7 @@ This will result in the following expirations:
 ```ruby
 @task.update_attributes({ :title => 'Update!' }) # or @task.destroy
 
-# => Expires /tasks
+# => Expires: /tasks
 # => Expires: /projects/1/tasks
 # => Expires: /projects/1/tasks/1
 ```
@@ -65,7 +65,7 @@ This will result in the following expirations:
 ```ruby
 @project.tasks.create
 
-# => Expires /tasks
+# => Expires: /tasks
 # => Expires: /projects/1/tasks
 ```
 
@@ -84,7 +84,7 @@ This will result in the following expirations:
 ```ruby
 @task.update_attributes({ :title => 'Update!' }) # or @task.destroy
 
-# => Expires /tasks
+# => Expires: /tasks
 # => Expires: /projects/1/tasks
 # => Expires: /projects/1/tasks/1
 # => Expires: /users/1/tasks
@@ -94,7 +94,7 @@ This will result in the following expirations:
 ```ruby
 @project.tasks.create
 
-# => Expires /tasks
+# => Expires: /tasks
 # => Expires: /projects/1/tasks
 # => Expires: /users/1/tasks
 ```
