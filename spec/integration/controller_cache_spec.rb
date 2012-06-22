@@ -16,7 +16,7 @@ describe "Controller Cache" do
         visit projects_path
         current_path.should be_action_cached
 
-        Rails.cache.read("catche.keys.views/www.example.com#{current_path}").should include 'catche.tags.projects'
+        Rails.cache.read("catche.views.views/www.example.com#{current_path}").should include 'catche.tags.projects'
         Rails.cache.read('catche.tags.projects').should be_present
       end
 
@@ -73,7 +73,7 @@ describe "Controller Cache" do
         current_path.should be_action_cached
 
         tag = "catche.tags.projects_#{@project.id}_tasks"
-        Rails.cache.read("catche.keys.views/www.example.com#{current_path}").should include tag
+        Rails.cache.read("catche.views.views/www.example.com#{current_path}").should include tag
         Rails.cache.read(tag).should be_present
       end
 
@@ -82,7 +82,7 @@ describe "Controller Cache" do
         current_path.should be_action_cached
 
         tag = "catche.tags.tasks_#{@task.id}"
-        Rails.cache.read("catche.keys.views/www.example.com#{current_path}").should include tag
+        Rails.cache.read("catche.views.views/www.example.com#{current_path}").should include tag
         Rails.cache.read(tag).should be_present
       end
 
