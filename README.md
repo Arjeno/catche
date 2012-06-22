@@ -129,7 +129,7 @@ end
 ```ruby
 @task.expire_resource!
 @task.expire_collection!
-@task.expire.expire_resource_and_collection!
+@task.expire_resource_and_collection!
 ```
 
 ## Supported cache stores
