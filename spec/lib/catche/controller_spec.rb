@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Catche::Controller::Base do
+describe Catche::Controller do
 
   before(:each) do
     @user     = User.create
