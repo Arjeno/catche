@@ -69,12 +69,34 @@ This will result in the following expirations:
 # => Expires: /projects/1/tasks
 ```
 
-You can use as many associations as you would like. But keep in mind they're nested.
+### Multiple associations
+
+You can use as many associations as you would like. Associations are not nested.
 
 ```ruby
 class Task < ActiveRecord::Base
   catche :through => [:user, :project]
 end
+```
+
+This will result in the following expirations:
+
+```ruby
+@task.update_attributes({ :title => 'Update!' }) # or @task.destroy
+
+# => Expires /tasks
+# => Expires: /projects/1/tasks
+# => Expires: /projects/1/tasks/1
+# => Expires: /users/1/tasks
+# => Expires: /users/1/tasks/1
+```
+
+```ruby
+@project.tasks.create
+
+# => Expires /tasks
+# => Expires: /projects/1/tasks
+# => Expires: /users/1/tasks
 ```
 
 ### Advanced configuration
