@@ -12,50 +12,67 @@ module Catche
       tags.flatten.compact.uniq.join(DIVIDER)
     end
 
-    def tag!(key, *tags)
-      tags.each do |tag|
-        keys      = fetch_tag(tag)
-        key_tags  = fetch_key(key)
-        tag_key   = stored_key(:tags, tag)
-        key_key   = stored_key(:keys, key)
+    # Tags a view
+    def tag_view!(view, *tags)
+      tag_type! :views, view, *tags
+    end
+    alias :tag_fragment! :tag_view!
 
-        Catche.adapter.write(tag_key, keys << key)
-        Catche.adapter.write(key_key, key_tags << tag_key)
+    # Tags a page cache
+    def tag_page!(page, *tags)
+      tag_type! :pages, page, *tags
+    end
+
+    # Dynamic method for tagging a type of stored cache
+    #
+    #   Catche::Tag.tag_type!(:views, 'example.com/projects', 'projects')
+    def tag_type!(scope, value, *tags)
+      tags.each do |tag|
+        data      = fetch_tag(tag)
+
+        # Set up key names
+        tag_key   = stored_key(:tags, tag)
+        type_key  = stored_key(scope, value)
+
+        # Current tags
+        type_tags = fetch_type(scope, value)
+
+        # Append new value to scoped data
+        data[scope] ||= []
+        data[scope] << value
+        tag_data  = data
+
+        # Append new tag key
+        type_data = type_tags << tag_key
+
+        Catche.adapter.write(tag_key, tag_data)
+        Catche.adapter.write(type_key, type_data)
       end
     end
 
     def expire!(*tags)
-      expired_keys = []
-
       tags.each do |tag|
-        keys = fetch_tag(tag)
-        expired_keys += keys
-
-        keys.each do |key|
-          # Expires the cached value
-          Catche.adapter.delete key
-
-          # Removes the tag from the tag list in case it's never used again
-          Catche.adapter.write(
-              stored_key(:keys, key),
-              fetch_key(key).delete(stored_key(:tags, tag))
-            )
-        end
-
+        Catche::Expire.expire! fetch_tag(tag)
         Catche.adapter.delete stored_key(:tags, tag)
       end
-
-      expired_keys
     end
 
     protected
 
       def fetch_tag(tag)
-        Catche.adapter.read stored_key(:tags, tag), []
+        Catche.adapter.read stored_key(:tags, tag), {}
       end
 
       def fetch_key(key)
         Catche.adapter.read stored_key(:keys, key), []
+      end
+
+      def fetch_type(type, value)
+        Catche.adapter.read stored_key(type, value), []
+      end
+
+      def fetch_path(path)
+        Catche.adapter.read stored_key(:paths, path), []
       end
 
       def stored_key(scope, value)
