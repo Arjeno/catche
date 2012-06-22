@@ -21,6 +21,21 @@ class ProjectsController < ApplicationController
 end
 ```
 
+This will result in the following expirations:
+
+```ruby
+@project.update_attributes({ :title => 'Update!' }) # or @project.destroy
+
+# => Expires /projects
+# => Expires: /projects/1
+```
+
+```ruby
+@project.create
+
+# => Expires /projects
+```
+
 ### Associative caching
 
 Catche supports associative (nested) caching.
@@ -37,18 +52,24 @@ class TasksController < ApplicationController
 end
 ```
 
-On resource `update` and `destroy` this will expire:
+This will result in the following expirations:
 
-* Resource: `tasks_1`
-* Collection: `tasks`
-* Collection: `projects_1_tasks_1`
+```ruby
+@task.update_attributes({ :title => 'Update!' }) # or @task.destroy
 
-On resource `create` this will expire:
+# => Expires /tasks
+# => Expires: /projects/1/tasks
+# => Expires: /projects/1/tasks/1
+```
 
-* Collection: `tasks`
-* Collection: `projects_1_tasks_1`
+```ruby
+@project.tasks.create
 
-You can use as many associations as you would like;
+# => Expires /tasks
+# => Expires: /projects/1/tasks
+```
+
+You can use as many associations as you would like. But keep in mind they're nested.
 
 ```ruby
 class Task < ActiveRecord::Base
