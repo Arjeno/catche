@@ -124,6 +124,28 @@ class Task < ActiveRecord::Base
 end
 ```
 
+## Manually expiring a cache
+
+```ruby
+@task.expire_resource!
+@task.expire_collection!
+@task.expire.expire_resource_and_collection!
+```
+
+## Supported cache stores
+
+Catche currently supports:
+
+* MemoryStore
+* Memcached
+* Dalli
+
+Want support for more? Just fork and open up a pull request.
+
+## Roadmap
+
+* View cache
+
 ## License
 
 This project is released under the MIT license.
