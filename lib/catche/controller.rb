@@ -21,8 +21,7 @@ module Catche
 
     module ClassMethods
 
-      # Caches a controller action by tagging it.
-      # Supports any option parameters caches_action supports.
+      # Caches a controller action.
       #
       #   catche Project, :index, :resource_name => :project
       def catche(model, *args)
@@ -31,8 +30,10 @@ module Catche
         self.catche_model = model
         self.catche_resource_name = options[:resource_name] || self.catche_model.name.downcase.to_sym
 
-        # Use Rails caches_action to pass along the tag
-        caches_action(*args, options.merge({ :catche => true }))
+        case options[:type]
+          when :page then caches_page *args, options
+          else            caches_action *args, options
+        end
       end
 
       def catche?

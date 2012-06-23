@@ -7,12 +7,7 @@ module Catche
       module ClassMethods
 
         def catches_page(model, *args)
-          options = args.extract_options!
-
-          self.catche_model = model
-          self.catche_resource_name = options[:resource_name] || self.catche_model.name.downcase.to_sym
-
-          caches_page *args, options
+          catche model, *args, :type => :page
         end
 
         def cache_page(content, path, extension = nil, gzip = Zlib::BEST_COMPRESSION)
