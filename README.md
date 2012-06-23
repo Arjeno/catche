@@ -21,7 +21,7 @@ class ProjectsController < ApplicationController
 end
 ```
 
-This will result in the following expirations:
+This will result in the following expirations, depending on your routes configuration:
 
 ```ruby
 @project.update_attributes({ :title => 'Update!' }) # or @project.destroy
