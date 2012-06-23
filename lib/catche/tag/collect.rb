@@ -6,7 +6,7 @@ module Catche
 
         # Collects resource tags for a given resource
         #
-        #   Catche::Tag::Tagger.resource_tags(@task)
+        #   Catche::Tag::Collect.resource_tags(@task)
         #   => { :set => ["tasks_1"], :expire => ["tasks_1"] }
         def resource(resource)
           set_tags    = []
@@ -23,7 +23,7 @@ module Catche
 
         # Collects collection tags for a given context, for example a controller
         #
-        #   Catche::Tag::Tagger.collection_tags(controller, Task)
+        #   Catche::Tag::Collect.collection_tags(controller, Task)
         #   => { :set => ["projects_1_tasks"], :expire => ["tasks", "projects_1_tasks"] }
         def collection(context, resource_class, include_base=true)
           associations      = Catche::ResourceLoader.fetch(context, *resource_class.catche_associations)

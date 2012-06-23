@@ -145,6 +145,17 @@ class Task < ActiveRecord::Base
 end
 ```
 
+## How does it work?
+
+Catche intercepts a cached value and tags this value using the unique identifier for the given/loaded resource or collection. Once a resource expires it will expire the tagged cached values, such as the resource itself and the collection it belongs to.
+
+```ruby
+Catche::Tag::Collect.resource(@task) # { :set => ["tasks_1"], :expire => ["tasks_1"] }
+Catche::Tag::Collect.collection_tags(@task, Task) # { :set => ["projects_1_tasks"], :expire => ["tasks", "projects_1_tasks"] }
+```
+
+The tags will point to different cached values, for example pointing to a cached key or a cached filepath.
+
 ## Manually expiring a cache
 
 ```ruby
