@@ -3,6 +3,8 @@ require 'spec_helper'
 describe "Controller Action" do
 
   before(:each) do
+    clear_cache!
+
     @user     = User.create
     @project  = @user.projects.create
     @task     = @project.tasks.create
@@ -15,9 +17,6 @@ describe "Controller Action" do
       it "should cache action index" do
         visit projects_path
         current_path.should be_page_cached
-
-        # Rails.cache.read("catche.pages.views/www.example.com#{current_path}").should include 'catche.tags.projects'
-        # Rails.cache.read('catche.tags.projects').should be_present
       end
 
       it "should not cache action show" do
@@ -36,8 +35,6 @@ describe "Controller Action" do
         project = @user.projects.create
 
         current_path.should_not be_page_cached
-
-        # Rails.cache.read('catche.tags.projects').should_not be_present
       end
 
       it "should expire index on resource update" do
@@ -47,8 +44,6 @@ describe "Controller Action" do
         @project.update_attributes :title => 'Updated title'
 
         current_path.should_not be_page_cached
-
-        # Rails.cache.read('catche.tags.projects').should_not be_present
       end
 
       it "should not expire resource on collection change" do
@@ -64,147 +59,133 @@ describe "Controller Action" do
 
   end
 
-  # describe "associations" do
+  describe "associations" do
 
-  #   describe "store" do
+    describe "store" do
 
-  #     it "should cache action index" do
-  #       visit project_tasks_path(@project)
-  #       current_path.should be_page_cached
+      it "should cache action index" do
+        visit project_tasks_path(@project)
+        current_path.should be_page_cached
+      end
 
-  #       # tag = "catche.tags.projects_#{@project.id}_tasks"
-  #       # Rails.cache.read("catche.pages.views/www.example.com#{current_path}").should include tag
-  #       # Rails.cache.read(tag).should be_present
-  #     end
+      it "should cache action show" do
+        visit project_task_path(@project, @task)
+        current_path.should be_page_cached
+      end
 
-  #     it "should cache action show" do
-  #       visit project_task_path(@project, @task)
-  #       current_path.should be_page_cached
+      it "should not cache action edit" do
+        visit edit_project_task_path(@project, @task)
+        current_path.should_not be_page_cached
+      end
 
-  #       # tag = "catche.tags.tasks_#{@task.id}"
-  #       # Rails.cache.read("catche.pages.views/www.example.com#{current_path}").should include tag
-  #       # Rails.cache.read(tag).should be_present
-  #     end
+    end
 
-  #     it "should not cache action edit" do
-  #       visit edit_project_task_path(@project, @task)
-  #       current_path.should_not be_page_cached
-  #     end
+    describe "expiring" do
 
-  #   end
+      it "should expire index on collection change" do
+        visit project_tasks_path(@project)
+        current_path.should be_page_cached
 
-  #   describe "expiring" do
+        task = @project.tasks.create
 
-  #     it "should expire index on collection change" do
-  #       visit project_tasks_path(@project)
-  #       current_path.should be_page_cached
+        current_path.should_not be_page_cached
+      end
 
-  #       task = @project.tasks.create
+      it "should expire resource on change" do
+        visit project_task_path(@project, @task)
+        current_path.should be_page_cached
 
-  #       current_path.should_not be_page_cached
+        @task.update_attributes :title => 'Updated title'
 
-  #       # Rails.cache.read("catche.tags.projects_#{@project.id}_tasks").should_not be_present
-  #     end
+        current_path.should_not be_page_cached
+      end
 
-  #     it "should expire resource on change" do
-  #       visit project_task_path(@project, @task)
-  #       current_path.should be_page_cached
+      it "should expire global index on collection change" do
+        visit tasks_path
+        current_path.should be_page_cached
 
-  #       @task.update_attributes :title => 'Updated title'
+        task = @project.tasks.create
 
-  #       current_path.should_not be_page_cached
+        current_path.should_not be_page_cached
+      end
 
-  #       # Rails.cache.read("catche.tags.projects_#{@project.id}_tasks_#{@task.id}").should_not be_present
-  #     end
+    end
 
-  #     it "should expire global index on collection change" do
-  #       visit tasks_path
-  #       current_path.should be_page_cached
+    describe "multiple" do
 
-  #       task = @project.tasks.create
+      describe "store" do
 
-  #       current_path.should_not be_page_cached
+        it "should cache action index" do
+          visit project_tasks_path(@project)
+          current_path.should be_page_cached
 
-  #       # Rails.cache.read("catche.tags.tasks").should_not be_present
-  #     end
+          visit user_tasks_path(@user)
+          current_path.should be_page_cached
+        end
 
-  #   end
+        it "should cache action show" do
+          visit project_task_path(@project, @task)
+          current_path.should be_page_cached
 
-  #   describe "multiple" do
+          visit user_task_path(@user, @task)
+          current_path.should be_page_cached
+        end
 
-  #     describe "store" do
+        it "should not cache action edit" do
+          visit edit_project_task_path(@project, @task)
+          current_path.should_not be_page_cached
 
-  #       it "should cache action index" do
-  #         visit project_tasks_path(@project)
-  #         current_path.should be_page_cached
+          visit edit_user_task_path(@user, @task)
+          current_path.should_not be_page_cached
+        end
 
-  #         visit user_tasks_path(@user)
-  #         current_path.should be_page_cached
-  #       end
+      end
 
-  #       it "should cache action show" do
-  #         visit project_task_path(@project, @task)
-  #         current_path.should be_page_cached
+      describe "expiring" do
 
-  #         visit user_task_path(@user, @task)
-  #         current_path.should be_page_cached
-  #       end
+        it "should expire index on collection change" do
+          visit project_tasks_path(@project)
+          current_path.should be_page_cached
 
-  #       it "should not cache action edit" do
-  #         visit edit_project_task_path(@project, @task)
-  #         current_path.should_not be_page_cached
+          task = @project.tasks.create
+          current_path.should_not be_page_cached
 
-  #         visit edit_user_task_path(@user, @task)
-  #         current_path.should_not be_page_cached
-  #       end
+          visit user_tasks_path(@user)
+          current_path.should be_page_cached
 
-  #     end
+          task = @project.tasks.create
+          current_path.should_not be_page_cached
+        end
 
-  #     describe "expiring" do
+        it "should expire resource on change" do
+          visit project_task_path(@project, @task)
+          path1 = current_path
+          path1.should be_page_cached
 
-  #       it "should expire index on collection change" do
-  #         visit project_tasks_path(@project)
-  #         current_path.should be_page_cached
+          visit user_task_path(@user, @task)
+          path2 = current_path
+          path2.should be_page_cached
 
-  #         task = @project.tasks.create
-  #         current_path.should_not be_page_cached
+          @task.update_attributes :title => 'Updated title'
 
-  #         visit user_tasks_path(@user)
-  #         current_path.should be_page_cached
+          path1.should_not be_page_cached
+          path2.should_not be_page_cached
+        end
 
-  #         task = @project.tasks.create
-  #         current_path.should_not be_page_cached
-  #       end
+        it "should expire global index on collection change" do
+          visit tasks_path
+          current_path.should be_page_cached
 
-  #       it "should expire resource on change" do
-  #         visit project_task_path(@project, @task)
-  #         path1 = current_path
-  #         path1.should be_page_cached
+          task = @project.tasks.create
 
-  #         visit user_task_path(@user, @task)
-  #         path2 = current_path
-  #         path2.should be_page_cached
+          current_path.should_not be_page_cached
+        end
 
-  #         @task.update_attributes :title => 'Updated title'
+      end
 
-  #         path1.should_not be_page_cached
-  #         path2.should_not be_page_cached
-  #       end
+    end
 
-  #       it "should expire global index on collection change" do
-  #         visit tasks_path
-  #         current_path.should be_page_cached
-
-  #         task = @project.tasks.create
-
-  #         current_path.should_not be_page_cached
-  #       end
-
-  #     end
-
-  #   end
-
-  # end
+  end
 
   def projects_path(*args)
     caches_page_projects_path(*args)
