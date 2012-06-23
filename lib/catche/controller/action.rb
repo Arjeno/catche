@@ -6,6 +6,10 @@ module Catche
 
       module ClassMethods
 
+        # Caches an action in Rails.cache
+        # See ActionController `caches_action` for more information
+        #
+        #   catches_action Project, :index
         def catches_action(model, *args)
           catche model, *args, :type => :action
         end

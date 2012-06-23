@@ -4,6 +4,10 @@ module Catche
 
       class << self
 
+        # Expires cache by deleting the associated files
+        # Uses the same flow as defined in `expire_page` in ActionController
+        #
+        #   Catche::Expire::Page.expire!('/public/projects.html')
         def expire!(*paths)
           paths.each do |path|
             File.delete(path) if File.exist?(path)

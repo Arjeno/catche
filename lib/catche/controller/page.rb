@@ -6,6 +6,10 @@ module Catche
 
       module ClassMethods
 
+        # Caches an action by file
+        # See ActionController `caches_page` for more information
+        #
+        #   catches_action Project, :index
         def catches_page(model, *args)
           catche model, *args, :type => :page
         end
