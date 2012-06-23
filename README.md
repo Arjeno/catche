@@ -11,13 +11,33 @@ gem "catche"
 
 ## Controller caching
 
-Controller caching is based on `caches_action` using the method `catche`.
+Catche supports both action and page caching using the Rails methods `caches_action` and `caches_page`.
+
+### Action caching
+
+Catche's `catches_action` uses Rails' `caches_action` and therefore supports all options this method supports.
+
+```ruby
+class ProjectsController < ApplicationController
+  catches_action Project, :index, :show
+end
+```
+
+### Page caching
+
+Catche's `catches_page` uses Rails' `caches_page` and therefore supports all options this method supports.
+
+```ruby
+class ProjectsController < ApplicationController
+  catches_page Project, :index, :show
+end
+```
 
 ### Simple caching
 
 ```ruby
 class ProjectsController < ApplicationController
-  catche Project, :index, :show
+  catches_action Project, :index, :show # or catches_page
 end
 ```
 
@@ -48,7 +68,7 @@ end
 
 ```ruby
 class TasksController < ApplicationController
-  catche Task, :index, :show
+  catches_action Task, :index, :show # or catches_page
 end
 ```
 
@@ -104,10 +124,11 @@ This will result in the following expirations:
 ```ruby
 class TasksController < ApplicationController
   catche(
-    Task,                       # Configured cached model
-    :index, :show,              # Actions
+    Task,                         # Configured cached model
+    :index, :show,                # Actions
     {
-      :resource_name => :task,  # Name of your resource, defaults to your model name
+      :resource_name  => :task,   # Name of your resource, defaults to your model name
+      :type           => :action, # Type of caching, :action or :page
     }
   )
 end
