@@ -1,0 +1,2 @@
+module CachesPage::ProjectsHelper
+end

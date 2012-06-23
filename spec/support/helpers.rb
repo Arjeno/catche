@@ -12,5 +12,10 @@ module RSpec
       controller
     end
 
+    def clear_cache!
+      ::Rails.cache.clear
+      FileUtils.rm_rf Dir.glob(File.join(::Rails.root, 'public/*'))
+    end
+
   end
 end

@@ -10,6 +10,30 @@ Dummy::Application.routes.draw do
 
   resources :tasks
 
+  namespace :caches_page do
+    resources :projects do
+      resources :tasks
+    end
+
+    resources :users do
+      resources :tasks
+    end
+
+    resources :tasks
+  end
+
+  namespace :caches_action do
+    resources :projects do
+      resources :tasks
+    end
+
+    resources :users do
+      resources :tasks
+    end
+
+    resources :tasks
+  end
+
   # The priority is based upon order of creation:
   # first created -> highest priority.
 

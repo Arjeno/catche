@@ -1,7 +1,5 @@
 class ProjectsController < ApplicationController
 
-  catche Project, :index
-
   # GET /projects
   # GET /projects.json
   def index

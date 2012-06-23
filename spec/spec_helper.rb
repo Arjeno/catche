@@ -45,4 +45,5 @@ Spork.each_run do
   end
 
   Rails.cache.clear
+  FileUtils.rm_rf Dir.glob(File.join(Rails.root, 'public/*'))
 end
