@@ -176,7 +176,6 @@ Want support for more? Just fork and open up a pull request.
 
 ## Roadmap
 
-* Page cache (caches_page)
 * View cache
 
 ## License
