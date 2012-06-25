@@ -1,6 +1,6 @@
 module Catche
   module Expire
-    module Page
+    module Pages
 
       class << self
 

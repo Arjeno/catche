@@ -1,6 +1,6 @@
 module Catche
   module Controller
-    module Action
+    module Actions
 
       extend ActiveSupport::Concern
 

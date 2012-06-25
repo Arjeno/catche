@@ -1,6 +1,6 @@
 module Catche
   module Controller
-    module Page
+    module Pages
 
       extend ActiveSupport::Concern
 
@@ -9,7 +9,7 @@ module Catche
         # Caches an action by file
         # See ActionController `caches_page` for more information
         #
-        #   catches_action Project, :index
+        #   catches_page Project, :index
         def catches_page(model, *args)
           catche model, *args, :type => :page
         end
@@ -28,7 +28,6 @@ module Catche
         self.class.catche_constructed_tags = catche_tags
         super
       end
-
 
     end
   end

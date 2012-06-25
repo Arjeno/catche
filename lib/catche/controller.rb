@@ -1,15 +1,13 @@
+require 'catche/controller/actions'
+require 'catche/controller/pages'
+
 module Catche
   module Controller
 
     extend ActiveSupport::Concern
-    extend ActiveSupport::Autoload
 
-    eager_autoload do
-      autoload :Action
-      autoload :Page
-    end
-
-    include Action, Page
+    include Catche::Controller::Actions
+    include Catche::Controller::Pages
 
     included do
 
