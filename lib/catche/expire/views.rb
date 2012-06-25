@@ -1,6 +1,6 @@
 module Catche
   module Expire
-    module View
+    module Views
 
       class << self
 

@@ -1,5 +1,5 @@
-require 'catche/expire/view'
-require 'catche/expire/page'
+require 'catche/expire/views'
+require 'catche/expire/pages'
 
 module Catche
   module Expire
@@ -7,8 +7,8 @@ module Catche
     class << self
 
       def expire!(data)
-        Catche::Expire::View.expire! *data[:views]
-        Catche::Expire::Page.expire! *data[:pages]
+        Catche::Expire::Views.expire! *data[:views]
+        Catche::Expire::Pages.expire! *data[:pages]
       end
 
     end
