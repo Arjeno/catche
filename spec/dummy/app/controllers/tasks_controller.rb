@@ -97,7 +97,7 @@ class TasksController < ApplicationController
   end
 
   def user
-    @user ||= Project.find(params[:user_id]) if params[:user_id].present?
+    @user ||= User.find(params[:user_id]) if params[:user_id].present?
   end
 
   def parent
