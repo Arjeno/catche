@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "Controller Action" do
+describe "Controller Page" do
 
   before(:each) do
     clear_cache!

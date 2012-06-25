@@ -9,14 +9,16 @@
     <th></th>
   </tr>
 
-<% @projects.each do |project| %>
-  <tr>
-    <td><%= project.title %></td>
-    <td><%= project.description %></td>
-    <td><%= link_to 'Show', project %></td>
-    <td><%= link_to 'Edit', edit_project_path(project) %></td>
-    <td><%= link_to 'Destroy', project, confirm: 'Are you sure?', method: :delete %></td>
-  </tr>
+<% catche @projects do %>
+  <% @projects.each do |project| %>
+    <tr>
+      <td><%= project.title %></td>
+      <td><%= project.description %></td>
+      <td><%= link_to 'Show', project %></td>
+      <td><%= link_to 'Edit', edit_project_path(project) %></td>
+      <td><%= link_to 'Destroy', project, confirm: 'Are you sure?', method: :delete %></td>
+    </tr>
+  <% end %>
 <% end %>
 </table>
 
