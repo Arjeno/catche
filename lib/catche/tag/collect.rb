@@ -21,11 +21,12 @@ module Catche
           }
         end
 
-        # Collects collection tags for a given context, for example a controller
+        # Collects collection tags for a given context, for example the resource or a controller
         #
-        #   Catche::Tag::Collect.collection_tags(controller, Task)
+        #   Catche::Tag::Collect.collection(@task)
         #   => { :set => ["projects_1_tasks"], :expire => ["tasks", "projects_1_tasks"] }
-        def collection(context, resource_class, include_base=true)
+        def collection(context, resource_class=nil, include_base=true)
+          resource_class  ||= context.class
           associations      = Catche::ResourceLoader.fetch(context, *resource_class.catche_associations)
           association_tags  = associations.map { |a| a.catche_tag }
 

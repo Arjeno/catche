@@ -65,7 +65,7 @@ module Catche
       end
 
       def expire_collection!
-        Catche::Tag.expire! *Catche::Tag::Collect.collection(self, self.class)[:expire]
+        Catche::Tag.expire! *Catche::Tag::Collect.collection(self)[:expire]
       end
 
       def expire_resource!

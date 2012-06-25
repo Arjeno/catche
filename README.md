@@ -151,7 +151,7 @@ Catche intercepts a cached value and tags this value using the unique identifier
 
 ```ruby
 Catche::Tag::Collect.resource(@task) # { :set => ["tasks_1"], :expire => ["tasks_1"] }
-Catche::Tag::Collect.collection_tags(@task, Task) # { :set => ["projects_1_tasks"], :expire => ["tasks", "projects_1_tasks"] }
+Catche::Tag::Collect.collection(@task) # { :set => ["projects_1_tasks"], :expire => ["tasks", "projects_1_tasks"] }
 ```
 
 The tags will point to different cached values, for example pointing to a cached key or a cached filepath.
