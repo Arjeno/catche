@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.authors     = ["Arjen Oosterkamp"]
   s.email       = ["mail@arjen.me"]
   s.homepage    = "http://arjen.me/"
-  s.summary     = "Smart collection and resource caching"
+  s.summary     = "Automatic resource and collection caching/expiration for Ruby on Rails"
   s.description = ""
 
   s.files = Dir["{app,config,db,lib}/**/*"] + ["MIT-LICENSE", "Rakefile", "README.md"]
