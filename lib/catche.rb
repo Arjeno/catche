@@ -10,12 +10,12 @@ module Catche
 
   extend self
 
-  def initialize_defaults
-    
-  end
+  class << self
 
-  def adapter
-    Catche::Adapter::Base
+    def adapter
+      Catche::Adapter::Base
+    end
+
   end
 
 end

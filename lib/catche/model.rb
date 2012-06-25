@@ -74,5 +74,3 @@ module Catche
 
   end
 end
-
-ActiveRecord::Base.send :include, Catche::Model
