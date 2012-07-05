@@ -9,6 +9,10 @@ Add this to your Gemfile and run `bundle`.
 gem "catche"
 ```
 
+## Troubleshooting
+
+This gem is still in beta (v0.x), this means that certain structures, especially storing data, may change. If you're experiencing problems please try clearing the cache using `Rails.cache.clear`. If that doesn't work please open up a new issue.
+
 ## Controller caching
 
 Catche supports both action and page caching using the Rails methods `caches_action` and `caches_page`.
