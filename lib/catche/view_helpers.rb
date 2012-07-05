@@ -9,7 +9,9 @@ module Catche
     #   <% end %>
     #
     #   <% catche @projects, :model => Project do %>
-    #     <%= @project.title %>
+    #     <% @projects.each do |project| %>
+    #       <%= project.title %>
+    #     <% end %>
     #   <% end %>
     def catche(model_or_resource, options={}, &block)
       tags    = []
