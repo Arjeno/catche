@@ -1,19 +1,15 @@
 <p id="notice"><%= notice %></p>
 
-<p>
-  <b>Title:</b>
-  <%= @project.title %>
-</p>
+<% catche @project do %>
+  <p>
+    <b>Title:</b>
+    <%= @project.title %>
+  </p>
 
-<p>
-  <b>Description:</b>
-  <%= @project.description %>
-</p>
-
-<% catche @project.tasks do %>
-  <% @project.tasks.each do |task| %>
-    <%= task.title %>
-  <% end %>
+  <p>
+    <b>Description:</b>
+    <%= @project.description %>
+  </p>
 <% end %>
 
 <%= link_to 'Edit', edit_project_path(@project) %> |

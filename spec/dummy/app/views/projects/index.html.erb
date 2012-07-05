@@ -9,7 +9,7 @@
     <th></th>
   </tr>
 
-<% catche @projects do %>
+<% catche @projects, :model => Project do %>
   <% @projects.each do |project| %>
     <tr>
       <td><%= project.title %></td>

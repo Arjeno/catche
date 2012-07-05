@@ -8,21 +8,20 @@ module Catche
     #     <%= @project.title %>
     #   <% end %>
     #
-    #   <% catche @project.tasks do %>
-    #     <% @project.tasks.each do |task| %>
-    #       <%= task.title %>
-    #     <% end %>
+    #   <% catche @projects, :model => Project do %>
+    #     <%= @project.title %>
     #   <% end %>
-    def catche(model_or_resource, options=nil, &block)
-      tags  = []
-      name  = Catche::Tag.join 'fragment', model_or_resource.hash
-      key   = ActiveSupport::Cache.expand_cache_key name, :views
+    def catche(model_or_resource, options={}, &block)
+      tags    = []
+      name    = Catche::Tag.join 'fragment', model_or_resource.hash
+      key     = ActiveSupport::Cache.expand_cache_key name, :views
+      object  = options[:model] || model_or_resource
 
-      if model_or_resource.respond_to?(:catche_tag)
-        if model_or_resource.respond_to?(:new)
-          tags = Catche::Tag::Collect.collection(controller, model_or_resource.catche_class)[:set]
+      if object.respond_to?(:catche_tag)
+        if object.respond_to?(:new)
+          tags = Catche::Tag::Collect.collection(controller, object)[:set]
         else
-          tags = Catche::Tag::Collect.resource(model_or_resource)[:set]
+          tags = Catche::Tag::Collect.resource(object)[:set]
         end
       end
 
