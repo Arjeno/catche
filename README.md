@@ -204,7 +204,7 @@ Want support for more? Just fork and open up a pull request.
 
 ## Roadmap
 
-* View cache
+No features planned for now. In need of a feature? Please open up an issue, or pull request.
 
 ## License
 
