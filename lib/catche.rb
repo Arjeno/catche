@@ -5,17 +5,18 @@ require 'catche/model'
 require 'catche/tag'
 require 'catche/resource_loader'
 require 'catche/expire'
+require 'catche/view_helpers'
 
 module Catche
 
   extend self
 
-  def initialize_defaults
-    
-  end
+  class << self
 
-  def adapter
-    Catche::Adapter::Base
+    def adapter
+      Catche::Adapter::Base
+    end
+
   end
 
 end

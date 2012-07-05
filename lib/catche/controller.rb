@@ -54,5 +54,3 @@ module Catche
 
   end
 end
-
-ActionController::Base.send :include, Catche::Controller

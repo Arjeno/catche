@@ -1,4 +1,7 @@
 class String
+  def fragment_cached?
+    Rails.cache.exist?("views/#{self}")
+  end
   def action_cached?
     Rails.cache.exist?("views/www.example.com#{self}")
   end

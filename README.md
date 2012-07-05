@@ -9,6 +9,10 @@ Add this to your Gemfile and run `bundle`.
 gem "catche"
 ```
 
+## Troubleshooting
+
+This gem is still in beta (v0.x), this means that certain structures, especially storing data, may change. If you're experiencing problems please try clearing the cache using `Rails.cache.clear`. If that doesn't work please open up a new issue.
+
 ## Controller caching
 
 Catche supports both action and page caching using the Rails methods `caches_action` and `caches_page`.
@@ -145,6 +149,30 @@ class Task < ActiveRecord::Base
 end
 ```
 
+## View caching
+
+Catche supports view caching using the Rails methods `cache`.
+
+### Resource caching
+
+```ruby
+<% catche @project do %>
+  <%= @project.title %>
+<% end %>
+```
+
+### Collection caching
+
+Because a collection may be an array, you will need to pass along the configured model you wish to use;
+
+```ruby
+<% catche @projects, :model => Project do %>
+  <% @projects.each do |project| %>
+    <%= project.title %>
+  <% end %>
+<% end %>
+```
+
 ## How does it work?
 
 Catche intercepts a cached value and tags this value using the unique identifier for the given/loaded resource or collection. Once a resource expires it will expire the tagged cached values, such as the resource itself and the collection it belongs to.
@@ -176,7 +204,7 @@ Want support for more? Just fork and open up a pull request.
 
 ## Roadmap
 
-* View cache
+No features planned for now. In need of a feature? Please open up an issue, or pull request.
 
 ## License
 
