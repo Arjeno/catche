@@ -1,3 +1,11 @@
+# Important
+
+This gem is no longer maintained. I strongly suggest using russian-doll-caching with the gem cache_digests.
+
+- https://github.com/rails/cache_digests
+- http://railscasts.com/episodes/387-cache-digests
+- http://37signals.com/svn/posts/3112-how-basecamp-next-got-to-be-so-damn-fast-without-using-much-client-side-ui
+
 # Catche [![Build Status](https://secure.travis-ci.org/Arjeno/catche.png?branch=master)](http://travis-ci.org/Arjeno/catche)
 
 Catche is a caching library for Ruby on Rails. It automates resource and collection caching/expiration. It basically tags cached outputs and expires those tags based on configuration.
